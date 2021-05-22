@@ -5,6 +5,7 @@ import Login from '@/views/accounts/Login'
 import Profile from '@/views/accounts/Profile'
 import Home from '@/views/Movies/Home'
 import MyMovieList from '@/views/Movies/MyMovieList'
+import MovieDetail from '@/views/Movies/MovieDetail'
 
 Vue.use(VueRouter)
 
@@ -34,6 +35,10 @@ const routes = [
     name: 'MyMovieList',
     component: MyMovieList
   },
+  { path: '/movies/MovieDetail',
+    name: 'MovieDetail',
+    component: MovieDetail
+  }
 ]
 
 const router = new VueRouter({

@@ -6,6 +6,10 @@
 </template>
 
 <script>
+import axios from 'axios'
+
+const SERVER_URL = process.env.VUE_APP_SERVER_URL
+
 export default {
   name: 'MyListForm',
   data: function () {
@@ -14,8 +18,15 @@ export default {
     }
   },
   methods: {
-    onInput: function() {
-      this.$store.dispatch('onInput', this.input_data)
+    onInput: function () {
+      axios.get(`${SERVER_URL}/movies/search/${this.input_data}`)
+      .then((res) => {
+        console.log(res)
+        this.$emit('on-input',res.data)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
     }
   }
 

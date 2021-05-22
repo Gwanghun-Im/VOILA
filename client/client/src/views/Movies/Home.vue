@@ -2,7 +2,7 @@
   <div>
     <h1>home</h1>
     
-    <MySearchForm/>
+    <MySearchForm @on-input='searchMovie'/>
 
     <ul>
       <MovieCard v-for="(movie, idx) in movies" :key='idx' :movie='movie'/>
@@ -30,27 +30,23 @@ export default {
     }
   },
   methods:{
-    setToken: function () {
-      const token = localStorage.getItem('jwt')
-      const config = {
-        Authorization: `JWT ${token}`
-      }
-      return config
-    },
     getMovies:function () {
-      axios.get(`${SERVER_URL}/movies`,{headers: this.setToken()})
+      axios.get(`${SERVER_URL}/movies`)
       .then(res => {
         this.movies = res.data
       })
       .catch(e => {
         console.log(e)
       })
+    },
+    searchMovie: function (res) {
+      console.log(res)
+      this.movies = res
     }
   },
-  created: function() {
-    this.getMovies()
-  }
-  
+  // created: function() {
+  //   this.getMovies()
+  // }
 }
 </script>
 

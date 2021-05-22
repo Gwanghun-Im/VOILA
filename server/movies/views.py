@@ -1,3 +1,4 @@
+
 from django.shortcuts import render, get_list_or_404, get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
@@ -7,22 +8,35 @@ from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 
-from .models import Movie, Review, Comment
-from .serializers import MovieListSerializer, ReviewSerializer, CommentSerializer,MovieSerializer
+from .models import Genre, Movie, Review, Comment
+from .serializers import MovieListSerializer, ReviewSerializer, CommentSerializer,MovieSerializer,GenreSerializer
 
 import requests
 api_key = '3a5a5d5bd9ebc60efe15703f924c7578'
 
+import jwt
+from django.conf import settings
+from django.contrib.auth import get_user_model
+
+def findUser(request):
+    token = request.headers['Authorization'].split()[1]
+    SECRET_KEY = settings.SECRET_KEY
+    payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+    user = get_object_or_404(get_user_model(), email=payload["email"])
+    return user
+
 @api_view(['GET'])
 def getMovie(request):
     movies = Movie.objects.all()
-    if not movies:
-        url = f'https://api.themoviedb.org/3/movie/top_rated?api_key={api_key}&language=ko-kr'
-        req = requests.get(url)
-        for movie in req.json().get('results'):
+    url = f'https://api.themoviedb.org/3/movie/top_rated?api_key={api_key}&language=ko-kr'
+    req = requests.get(url)
+    for movie in req.json().get('results'):
+        try:
+            Movie.objects.get(id=movie.get('id'))
+        except:
             serializer = MovieListSerializer(data=movie)
             if serializer.is_valid(raise_exception=True):
-                serializer.save()
+                serializer.save(genre=[movie.get('genre_ids')])
     serializer = MovieListSerializer(movies, many=True)
     return Response(serializer.data)
 
@@ -31,10 +45,10 @@ def movie(request, pk):
     movie = get_object_or_404(Movie, pk=pk)
     if request.method == 'POST':
         serializer = ReviewSerializer(data=request.data)
-        print(request.data)
         movie = get_object_or_404(Movie, pk=pk)
         if serializer.is_valid(raise_exception=True):
-            serializer.save(movie = movie)
+            print(findUser(request))
+            serializer.save(movie = movie, user=findUser(request))
             return Response(serializer.data, status=status.HTTP_201_CREATED)        
     if request.method == 'GET':
         serializer = MovieSerializer(movie)
@@ -78,3 +92,18 @@ def comment(request, pk, review_pk, comment_pk):
         if serializer.is_valid(raise_exception=True):
             serializer.save(review = review)
             return Response(serializer.data, status=status.HTTP_201_CREATED)  
+
+@api_view(['GET'])
+def search(request,title):
+    movies = Movie.objects.all()
+    url = f'https://api.themoviedb.org/3/search/movie/?api_key={api_key}&language=ko-kr&query={title}'
+    req = requests.get(url)
+    for movie in req.json().get('results'):
+        try:
+            Movie.objects.get(id=movie.get('id'))
+        except:
+            serializer = MovieListSerializer(data=movie)
+            serializer.genres = [movie.get('genre_ids')]
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+    return Response(req.json().get('results'))

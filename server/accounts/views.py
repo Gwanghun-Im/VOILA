@@ -11,6 +11,9 @@ from django.shortcuts import render, get_list_or_404, get_object_or_404
 from .serializers import UserSerializer, UserLoginSerializer, UserProfileSerializer
 from .models import User
 
+import jwt
+from django.conf import settings
+
 @api_view(['POST'])
 def signup(request):
 	#1-1. Client에서 온 데이터를 받아서
@@ -53,8 +56,10 @@ def login(request):
 @authentication_classes([JSONWebTokenAuthentication])
 @permission_classes([IsAuthenticated])
 @api_view(['GET'])
-def profile(request,pk):
-    print(request.headers['Authorization'].split()[1])
-    user = get_object_or_404(User, email='aaa@aaa.com')
+def profile(request):
+    token = request.headers['Authorization'].split()[1]
+    SECRET_KEY = settings.SECRET_KEY
+    payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+    user = get_object_or_404(User, email=payload["email"])
     serializer = UserProfileSerializer(user)
     return Response(serializer.data)

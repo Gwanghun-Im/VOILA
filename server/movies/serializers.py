@@ -1,5 +1,6 @@
+from django.db.models import fields
 from rest_framework import serializers
-from .models import Movie, Comment, Review
+from .models import Genre, Movie, Comment, Review
 
 
 class MovieListSerializer(serializers.ModelSerializer):
@@ -27,4 +28,9 @@ class MovieSerializer(serializers.ModelSerializer):
     review_count = serializers.IntegerField(source='review_set.count', read_only=True)
     class Meta:
         model = Movie
+        fields = '__all__'
+
+class GenreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Genre
         fields = '__all__'

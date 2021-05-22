@@ -1,6 +1,7 @@
 <template>
     <div>
     <h1>Login</h1>
+    <p>{{e}}</p>
     <div>
       <label for="email">사용자 이름: </label>
       <input type="text" id="email" v-model="credentials.email">
@@ -27,6 +28,7 @@ export default {
         email: '',
         password: '',
       },
+      e : ''
     }
   },
   methods: {
@@ -34,9 +36,13 @@ export default {
       axios.post(`${SERVER_URL}/accounts/login/`, this.credentials)
       .then((res) => {
         console.log(res)
-        localStorage.setItem('jwt', res.data.token)
-        this.$emit('login')
-        this.$router.push({ name: 'Home' })
+        if (res.data.message==='fail'){
+          this.e = res.data.message
+        } else {
+          localStorage.setItem('jwt', res.data.token)
+          this.$emit('login')
+          this.$router.push({ name: 'Home' })
+        }
       })
       .catch((err) => {
         console.log(err)

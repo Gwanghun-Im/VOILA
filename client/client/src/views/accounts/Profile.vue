@@ -24,6 +24,7 @@ export default {
           Authorization: `JWT ${token}`,
         }
       }
+      console.log(token)
       return config
     },
 
