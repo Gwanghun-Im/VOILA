@@ -47,17 +47,15 @@ def movie(request, pk):
         serializer = ReviewSerializer(data=request.data)
         movie = get_object_or_404(Movie, pk=pk)
         if serializer.is_valid(raise_exception=True):
-            print(findUser(request))
             serializer.save(movie = movie, user=findUser(request))
-            return Response(serializer.data, status=status.HTTP_201_CREATED)        
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
     if request.method == 'GET':
         serializer = MovieSerializer(movie)
         return Response(serializer.data)
 
 @api_view(['POST','GET', 'DELETE', 'PUT'])
 def review(request, pk, review_pk):
-    movie = get_object_or_404(Movie, pk=pk)
-    review = get_object_or_404(Review, movie=pk, pk=review_pk)
+    review = get_object_or_404(Review, pk=review_pk)
     if request.method == 'GET':
         serializer = ReviewSerializer(review)
         return Response(serializer.data)
@@ -73,25 +71,18 @@ def review(request, pk, review_pk):
             serializer.save()
             return Response(serializer.data)
     elif request.method == 'POST':
-        serializer = ReviewSerializer(instance=review, data=request.data)
-        movie = get_object_or_404(Movie, pk=pk)
+        serializer = CommentSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            serializer.save(movie = movie)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)        
+            serializer.save(Review = review, user=findUser(request))
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 @api_view(['POST','GET'])
 def comment(request, pk, review_pk, comment_pk):
-    movie = get_object_or_404(Movie, pk=pk)
     review = get_object_or_404(Review, movie=pk, pk=review_pk)
     comment = get_object_or_404(Comment, Review=review, pk= comment_pk)
     if request.method == 'GET':
         serializer = CommentSerializer(comment)
         return Response(serializer.data)
-    elif request.method == 'POST':
-        serializer = CommentSerializer(instance=comment, data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save(review = review)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)  
 
 @api_view(['GET'])
 def search(request,title):
@@ -107,3 +98,24 @@ def search(request,title):
             if serializer.is_valid(raise_exception=True):
                 serializer.save()
     return Response(req.json().get('results'))
+
+@api_view(['GET'])
+def detail(request, movie_id):
+    url = f'https://api.themoviedb.org/3/movie/{movie_id}?api_key={api_key}&language=ko-kr'
+    movie = requests.get(url).json()
+    try:
+        Movie.objects.get(id=movie.get('id'))
+    except:
+        serializer = MovieListSerializer(data=movie)
+        serializer.genres = [movie.get('genre_ids')]
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+    title = movie.get('title')
+    youtube_url = f'https://www.googleapis.com/youtube/v3/search?key=AIzaSyBh8RRzXwFyUKx5KXL4X8bXf_JH16T5eVA&part=snippet&type=video&q={title}+officail+trailer'
+    youtube = requests.get(youtube_url).json()
+    data={
+        'movie':movie,
+        'youtube':youtube
+    }
+
+    return Response(data)

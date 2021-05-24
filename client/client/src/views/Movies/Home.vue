@@ -1,13 +1,9 @@
 <template>
   <div>
-    <h1>home</h1>
-    
     <MySearchForm @on-input='searchMovie'/>
-
     <ul>
       <MovieCard v-for="(movie, idx) in movies" :key='idx' :movie='movie'/>
     </ul>
-
     </div>
 </template>
 

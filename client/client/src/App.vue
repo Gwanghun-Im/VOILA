@@ -1,19 +1,46 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link :to="{name:'Home'}">Home</router-link> |
-      <span v-if="login">
-        <router-link :to="{name: 'MyMovieList'}">MyMovieList</router-link> |
-        <router-link :to="{name: 'Profile'}">Profile</router-link> |
-        <router-link to="#" @click.native="logout">LOGOUT</router-link> |
-      </span>
-      <span v-else>
-        <router-link :to="{ name: 'Signup' }">Signup</router-link> |
-        <router-link :to="{ name: 'Login' }">Login</router-link> 
-      </span>
+      <nav class="navbar navbar-expand-lg navbar-light bg-dark">
+        <div class="container-fluid">
+          <router-link :to="{name: 'Home'}"><img src="@/assets/gugu.jpg" alt="?" height='50'></router-link>
+          <div class="container">
+            <div class="row d-flex">
+              <div class="col-8"></div>
+              <div class="col-4 justify-content-end">
+                <div v-if="login">
+                  <div class="row">
+                    <div class="col-4 text-white">{{user}}</div>
+                    <div class="col-4">
+                      <router-link to="#" @click.native="logout"><input type="submit" class="btn logout" value="logout"></router-link>
+                    </div>
+                    <div class="col-4">
+                      <router-link :to="{name: 'Profile'}"><input type="submit" class="btn btn-primary" value="profile"></router-link>
+                    </div>
+                  </div>
+                </div>
+                <div v-else>
+                  <div class="row">
+                    <div class="col-4"></div>
+                    <div class="col-4">
+                      <router-link :to="{ name: 'Login' }"><input type="submit" class="btn login" value="login"></router-link> 
+                    </div>
+                    <div class="col-4">
+                        <router-link :to="{ name: 'Signup' }"><input type="submit" class="btn signup" value="signup"></router-link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
     </div>
     <router-view @login="login = true"/>
+
   </div>
+
+
 </template>
 
 <script>
@@ -54,8 +81,9 @@ export default {
   color: #2c3e50;
 }
 
-#nav {
+nav {
   padding: 30px;
+  border-radius: 24px;
 }
 
 #nav a {
@@ -65,5 +93,20 @@ export default {
 
 #nav a.router-link-exact-active {
   color: #42b983;
+}
+
+.login{
+  background: #2ecc71;
+  color: white;
+}
+
+.signup{
+  background: #2980b9;
+  color: white;
+}
+
+.logout {
+  background: #c0392b;
+  color: white;
 }
 </style>

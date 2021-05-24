@@ -1,6 +1,7 @@
 <template>
   <div>
     <button @click="profile">get</button>
+    {{user}}
   </div>
 </template>
 
@@ -34,15 +35,18 @@ export default {
       axios.get(`${SERVER_URL}/accounts/profile/`,config)
       .then((res) => {
         console.log(res)
+        this.user = res.data
       })
       .catch((err) => {
         console.log(err)
       })
     }
+  },
+  created:function (){
+    this.profile()
   }
 }
 </script>
 
-<style>
-
+<style scoped>
 </style>
