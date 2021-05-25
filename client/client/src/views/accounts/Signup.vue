@@ -4,6 +4,7 @@
       <div class="box">
         <h1>Signup</h1>
         <div>
+          <input type="text" id="username" v-model="credentials.username" placeholder="username">
           <input type="text" id="email" v-model="credentials.email" placeholder="email">
           <input type="password" id="password" v-model="credentials.password" placeholder="Password">
           <input type="password" id="passwordConfirmation" v-model="credentials.passwordConfirmation" @keypress.enter="signup(credentials)" placeholder="passwordConfirmation">
@@ -27,6 +28,7 @@ export default {
         email: '',
         password: '',
         passwordConfirmation: '',
+        username:''
       },
       e:''
     }

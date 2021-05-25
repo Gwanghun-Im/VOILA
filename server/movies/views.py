@@ -1,5 +1,8 @@
 
+from django.db.models.deletion import PROTECT
+from django.http.response import JsonResponse
 from django.shortcuts import render, get_list_or_404, get_object_or_404
+from django.core import serializers
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -47,6 +50,7 @@ def movie(request, pk):
         serializer = ReviewSerializer(data=request.data)
         movie = get_object_or_404(Movie, pk=pk)
         if serializer.is_valid(raise_exception=True):
+            print(request.headers)
             serializer.save(movie = movie, user=findUser(request))
             return Response(serializer.data, status=status.HTTP_201_CREATED)
     if request.method == 'GET':
@@ -118,4 +122,21 @@ def detail(request, movie_id):
         'youtube':youtube
     }
 
+    return Response(data)
+
+
+from collections import Counter
+
+@api_view(['GET'])
+def word(request, user_pk):
+    movie = Movie.objects.filter(pk=user_pk).only('overview')
+    words = ''
+    for i in movie:
+        words += i.overview
+    words = words.replace('.', '').replace(',','').replace("'","").replace('·', ' ').replace('=','').replace('\n','')
+    stop = ['에','를','의','들이','와','을','그리고','모든','더']
+    for s in stop:
+        exec(f'words = words.replace("{s}","")')
+    wC = Counter(words.split())
+    data = [{'text':k, 'value':v} for k,v in wC.items()]
     return Response(data)

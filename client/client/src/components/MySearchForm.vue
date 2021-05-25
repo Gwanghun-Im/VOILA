@@ -2,7 +2,7 @@
   <div>
     <input type="text" @keyup.enter="onInput" v-model = 'input_data' class="my-4" >
     <button @click="onInput" type="button" class="btn btn-primary mx-1" >Search</button>
-    <p v-if="msg">{{msg}}</p>
+    <p class="text-white" v-if="msg">{{msg}}</p>
   </div>
 </template>
 

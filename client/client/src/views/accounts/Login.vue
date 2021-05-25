@@ -33,12 +33,11 @@ export default {
     login: function () {
       axios.post(`${SERVER_URL}/accounts/login/`, this.credentials)
       .then((res) => {
-        console.log(res)
         if (res.data.message==='fail'){
           this.e = res.data.message
         } else {
           localStorage.setItem('jwt', res.data.token)
-          this.$emit('login')
+          this.$emit('login',res.data.email)
           this.$router.push({ name: 'Home' })
         }
       })

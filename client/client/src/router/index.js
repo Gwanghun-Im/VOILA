@@ -4,8 +4,7 @@ import Signup from '@/views/accounts/Signup'
 import Login from '@/views/accounts/Login'
 import Profile from '@/views/accounts/Profile'
 import Home from '@/views/Movies/Home'
-import MyMovieList from '@/views/Movies/MyMovieList'
-import MovieDetail from '@/views/Movies/MovieDetail'
+import Reviews from '@/views/Reviews/Reviews'
 
 Vue.use(VueRouter)
 
@@ -31,13 +30,9 @@ const routes = [
     component:Home,
   },
   {
-    path: '/movies/MyMovieList',
-    name: 'MyMovieList',
-    component: MyMovieList
-  },
-  { path: '/movies/MovieDetail',
-    name: 'MovieDetail',
-    component: MovieDetail
+    path: '/reviews/:id',
+    name: 'Reviews',
+    component: Reviews
   }
 ]
 
