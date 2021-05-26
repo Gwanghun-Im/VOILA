@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <cloud :data="words" :fontSizeMapper="fontSizeMapper" :width="width" :height="height" :words="words"/>
+    <cloud :data="words" :fontSizeMapper="fontSizeMapper" :words="words" :width="500" :rotate="rotate" />
   </div>
 </template>
  
@@ -11,9 +11,8 @@ export default {
   name: 'app',
   data() {
     return {
-      width:500,
-      height:500,
-      fontSizeMapper: word => Math.log2(word.value) * 4,
+      fontSizeMapper: word => Math.log2(word.value) * 30,
+      rotate : word => word.value % 360
     }
   },
   props:{

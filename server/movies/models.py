@@ -25,6 +25,8 @@ class Review(models.Model):
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,blank=True)
     like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_reviews',blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
 class Comment(models.Model):
     Review = models.ForeignKey(Review, on_delete=models.CASCADE)

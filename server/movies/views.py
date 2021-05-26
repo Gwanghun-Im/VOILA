@@ -50,7 +50,6 @@ def movie(request, pk):
         serializer = ReviewSerializer(data=request.data)
         movie = get_object_or_404(Movie, pk=pk)
         if serializer.is_valid(raise_exception=True):
-            print(request.headers)
             serializer.save(movie = movie, user=findUser(request))
             return Response(serializer.data, status=status.HTTP_201_CREATED)
     if request.method == 'GET':
@@ -80,13 +79,44 @@ def review(request, pk, review_pk):
             serializer.save(Review = review, user=findUser(request))
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-@api_view(['POST','GET'])
+@api_view(['POST'])
+def like_movie(request,pk):
+    movie = get_object_or_404(Movie, pk=pk)
+    user = findUser(request)
+    state = 0
+    if movie.like_users.filter(pk=user.pk).exists():
+        movie.like_users.remove(user)
+    else:
+        state = 1
+        movie.like_users.add(user)
+    print(state)
+    return Response(state)
+
+@api_view(['POST'])
+def like_review(request,review_pk):
+    review = get_object_or_404(Review, pk=review_pk)
+    user = findUser(request)
+    state = 0
+    if review.like_users.filter(pk=user.pk).exists():
+        review.like_users.remove(user)
+    else:
+        state = 1
+        review.like_users.add(user)
+    return Response(state)
+
+@api_view(['GET','DELETE'])
 def comment(request, pk, review_pk, comment_pk):
     review = get_object_or_404(Review, movie=pk, pk=review_pk)
     comment = get_object_or_404(Comment, Review=review, pk= comment_pk)
     if request.method == 'GET':
         serializer = CommentSerializer(comment)
         return Response(serializer.data)
+    elif request.method == 'DELETE':
+        comment.delete()
+        data = {
+            'delete':f'리뷰 {review_pk}번이 삭제 되었습니다.'
+        }
+        return Response(data, status=status.HTTP_204_NO_CONTENT)
 
 @api_view(['GET'])
 def search(request,title):
@@ -129,14 +159,12 @@ from collections import Counter
 
 @api_view(['GET'])
 def word(request, user_pk):
-    movie = Movie.objects.filter(pk=user_pk).only('overview')
+    user = findUser(request)
+    movie = user.like_movies.all()
     words = ''
     for i in movie:
         words += i.overview
     words = words.replace('.', '').replace(',','').replace("'","").replace('·', ' ').replace('=','').replace('\n','')
-    stop = ['에','를','의','들이','와','을','그리고','모든','더']
-    for s in stop:
-        exec(f'words = words.replace("{s}","")')
     wC = Counter(words.split())
     data = [{'text':k, 'value':v} for k,v in wC.items()]
     return Response(data)

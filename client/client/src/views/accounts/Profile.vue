@@ -25,15 +25,11 @@
         <h3>당신의 리뷰</h3>
         <div class="box-container">
           <div v-for="(review,idx) in reviews" :key="idx">
-            <div class="content-box">
+            <div class="content-box" @click="gotoComment(review.fields.movie,review.pk)">
               <div class="top">
                 <div class="profile">
-                  <div class="profile-img">
-                    <img src="" alt="">
-                  </div>
                   <div class="name-user">
                     <strong>{{review.fields.title}}</strong>
-                    <span>@{{review.fields.user}}</span>
                   </div>
                 </div>
                 <div class="reviews">
@@ -44,9 +40,6 @@
                   <i class="far fa-star"></i>
                   {{review.fields.rank}}
                 </div>
-              </div>
-              <div class="context">
-                <p>{{review.fields.content}}</p>
               </div>
             </div>
           </div>
@@ -90,6 +83,7 @@ export default {
       axios.get(`${SERVER_URL}/accounts/profile/`,config)
       .then((res) => {
         this.user = res.data.user
+        console.log(res.data)
         if (res.data.review) {
           this.reviews = JSON.parse(res.data.review)
         } else {
@@ -112,6 +106,15 @@ export default {
       .then(res => {
         this.words = res.data
       })
+    },
+    gotoComment:function (m,pk) {
+      this.$router.push({ 
+        name: 'Comments', 
+        params:{
+          movie_id: m ,
+          review_id: pk
+        }
+      })
     }
   },
   created:function (){
@@ -128,7 +131,7 @@ export default {
 
 h3{
   font-weight: 500;
-  margin-bottom: 100px;
+  margin-bottom: 50px;
 }
 
 .review_box{

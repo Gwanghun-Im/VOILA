@@ -1,6 +1,6 @@
 <template>
   <div>
-    <MySearchForm @on-input='searchMovie'/>
+    <MySearchForm class="search" @on-input='searchMovie'/>
 
     <div class='row row-cols-2 row-cols-md-3 row-cols-lg-4 d-inline-block'>
       <MovieCard v-for="(movie, idx) in movies" :key='idx' :movie='movie' @card-click="setMovieDetail"/>
@@ -61,5 +61,8 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+.modal-content{
+  border-radius: 26px;
+}
 </style>

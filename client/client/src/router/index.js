@@ -5,6 +5,7 @@ import Login from '@/views/accounts/Login'
 import Profile from '@/views/accounts/Profile'
 import Home from '@/views/Movies/Home'
 import Reviews from '@/views/Reviews/Reviews'
+import Comments from '@/views/Reviews/Comments'
 
 Vue.use(VueRouter)
 
@@ -33,6 +34,11 @@ const routes = [
     path: '/reviews/:id',
     name: 'Reviews',
     component: Reviews
+  },
+  {
+    path: '/review/:movie_id/:review_id',
+    name: 'Comments',
+    component: Comments
   }
 ]
 

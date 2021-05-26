@@ -1,6 +1,6 @@
 <template>
   <div @click="selectVideo" class="col form-check form-check-inline card-container"
-    v-if="movie.overview" data-bs-toggle="modal" data-bs-target="#selected_movie">
+    v-if="movie.overview && movie.poster_path" data-bs-toggle="modal" data-bs-target="#selected_movie">
     <div class="card my-3">
       <img :src="'https://image.tmdb.org/t/p/w500'+movie.poster_path" alt="movie_img" class="card-image" >
       
@@ -55,7 +55,8 @@ export default {
   .card {
   grid-template-areas: "image" "text" "info";
   border-radius: 18px;
-  background: white;
+  background: #191919;
+  color: white;
   box-shadow: 5px 5px 15px rgba(0,0,0,0.9);
   font-family: roboto;
   text-align: center;

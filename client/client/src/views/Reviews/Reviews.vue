@@ -5,47 +5,89 @@
     </div>
     <div class="box-container">
       <div class="post-box">
-        <div class="top">
-          <div class="profile">
-              <div class="profile-img">
-                <img src="" alt="">
-              </div>
-            <input class="name-user" type="text" v-model="create.title" placeholder="title">
+        <input type="text" v-model="create.title" placeholder="title">
+        <textarea v-model="create.content" placeholder="content"></textarea>
+        <div class="reviews">
+          <div  @mouseenter="star(2)" v-if="create.rank>1">
+            <i class="fas fa-2x fa-star"></i>
           </div>
-          <div class="review">
-            <input type="number" v-model="create.rank" placeholder="rank">
+          <div  @mouseenter="star(2)" v-else-if="create.rank<1">
+            <i class="far fa-2x fa-star"></i>
+          </div>
+          <div  @mouseenter="star(4)" v-if="create.rank>3">
+            <i class="fas fa-2x fa-star"></i>
+          </div>
+          <div  @mouseenter="star(4)" v-else-if="create.rank<3">
+            <i class="far fa-2x fa-star"></i>
+          </div>
+          <div  @mouseenter="star(6)" v-if="create.rank>5">
+            <i class="fas fa-2x fa-star"></i>
+          </div>
+          <div  @mouseenter="star(6)" v-else>
+            <i class="far fa-2x fa-star"></i>
+          </div>
+          <div  @mouseenter="star(8)" v-if="create.rank>7">
+            <i class="fas fa-2x fa-star"></i>
+          </div>
+          <div  @mouseenter="star(8)" v-else>
+            <i class="far fa-2x fa-star"></i>
+          </div>
+          <div  @mouseenter="star(10)" v-if="create.rank>9">
+            <i class="fas fa-2x fa-star"></i>
+          </div>
+          <div  @mouseenter="star(10)" v-else>
+            <i class="far fa-2x fa-star"></i>
           </div>
         </div>
-        <div class="context">
-          <input type="text" v-model="create.content" placeholder="content">
-          <button @click="post_review">작성</button>
-        </div>
+        <button class="btn btn-primary" @click="post_review">작성</button>
       </div>
     </div>
     <div class="box-container">
+      <div class="mb-3" v-if="movie_info.review_set.length === 0">아직 리뷰가 없네요...</div>
       <div v-for="(review,idx) in movie_info.review_set" :key="idx">
-        <div class="content-box">
+        <div class="content-box" @click="gotoComment(review.id)">
           <div class="top">
             <div class="profile">
               <div class="profile-img">
-                <img src="" alt="">
+                <span>{{review.like_users.length}}</span>
               </div>
               <div class="name-user">
                 <strong>{{review.title}}</strong>
-                <span>@{{review.user}}</span>
+                <span>@{{review.username.split('@')[0]}}</span>
               </div>
             </div>
             <div class="reviews">
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="far fa-star"></i>
-              {{review.rank}}
+              <div v-if="review.rank>=1">
+                <i class="fas fa-star"></i>
+              </div>
+              <div v-else-if="review.rank<1">
+                <i class="far fa-star"></i>
+              </div>
+              <div  v-if="review.rank>=3">
+                <i class="fas fa-star"></i>
+              </div>
+              <div  v-else-if="review.rank<3">
+                <i class="far fa-star"></i>
+              </div>
+              <div  v-if="review.rank>=5">
+                <i class="fas fa-star"></i>
+              </div>
+              <div  v-else>
+                <i class="far fa-star"></i>
+              </div>
+              <div  v-if="review.rank>=7">
+                <i class="fas fa-star"></i>
+              </div>
+              <div  v-else>
+                <i class="far fa-star"></i>
+              </div>
+              <div   v-if="review.rank>=9">
+                <i class="fas fa-star"></i>
+              </div>
+              <div   v-else>
+                <i class="far fa-star"></i>
+              </div>
             </div>
-          </div>
-          <div class="context">
-            <p>{{review.content}}</p>
           </div>
         </div>
       </div>
@@ -66,7 +108,7 @@ export default {
       create:{
         title: '',
         content:'',
-        rank:''
+        rank:0
       }
     }
   },
@@ -105,8 +147,25 @@ export default {
         headers: params.headers,
         data: this.create
       })
+      .then(res => {
+        this.$router.push({name:'Comments',params:{movie_id:this.movie_info.id, review_id:res.data.id}})
+        }
+      )
+    },
+    gotoComment: function (pk) {
+      this.$router.push({ 
+        name: 'Comments', 
+        params:{
+          movie_id: this.movie_id ,
+          review_id: pk
+        }
+      })
+    },
+    star: function (num) {
+      this.create.rank = num
     }
-  }
+  },
+  
 }
 </script>
 
@@ -143,10 +202,30 @@ a {
   flex-wrap: wrap;
   width: 100%;
 }
-.content-box,.post-box {
+.post-box{
+  color: #191919;
+  width: 80%;
+  background-color: #ffffff;
+  border-radius: 24px;
+  padding: 20px;
+  margin: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.box input,textarea{
+  font-family: 'Roboto', sans-serif;
+  text-align: center;
+  border: 2px solid #3498db;
+  padding: 14px 10px;
+  outline: none;
+  border-radius: 24px;
+  transition: 0.25s;
+}
+.content-box {
   color: #191919;
   width: 500px;
-  box-shadow: 2px 2px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 2px 2px 30px rgba(196, 8, 221, 0.46);
   background-color: #ffffff;
   border-radius: 24px;
   padding: 20px;
@@ -165,12 +244,12 @@ a {
   overflow: hidden;
   margin-right: 10px;
 }
-.profile-img img {
+.profile-img span {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  font-size: 2rem;
+  color: rgb(161, 41, 87);
   object-position: center;
-  background-color: grey;
 }
 .profile{
   display: flex;
@@ -191,6 +270,9 @@ a {
 }
 .reviews{
   color: #f9d71c;
+  display: flex;
+  justify-content: center;
+  
 }
 .top{
   display: flex;

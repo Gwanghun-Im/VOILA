@@ -1,8 +1,10 @@
 <template>
-  <div>
-    <input type="text" @keyup.enter="onInput" v-model = 'input_data' class="my-4" >
-    <button @click="onInput" type="button" class="btn btn-primary mx-1" >Search</button>
-    <p class="text-white" v-if="msg">{{msg}}</p>
+  <div class="box">
+    <div class="search-box mt-4">
+      <input type="text" @keyup.enter="onInput" v-model = 'input_data' class="search-txt" placeholder = "search" >
+      <i class="search-btn fas fa-search" @click="onInput"></i>
+      <p class="text-white mt-5" v-if="msg">{{msg}}</p>
+    </div>
   </div>
 </template>
 
@@ -43,5 +45,44 @@ export default {
 </script>
 
 <style scoped>
+.box {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 3%;
+}
+
+.search-box{
+  background: white;
+  height: 40px;
+  border-radius: 40px;
+  padding : 10px;
+  width: 500PX;
+}
+
+.search-btn{
+  color: #e84118;
+  float: right;
+  /* top: 15%; */
+  width: 40px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;  
+}
+
+.search-txt{
+  border:none;
+  background: none;
+  outline: none;
+  float: left;
+  padding: 0;
+  color: black;
+  font-size: 16px;
+  transition: 0.4s;
+  line-height: 20px;
+  width:400px;
+}
 
 </style>
