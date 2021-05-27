@@ -40,7 +40,6 @@ class MovieSerializer(serializers.ModelSerializer):
 
     def user_like(self, review):
         user = self.context.get('user')
-        print(self.context)
         if review.like_users.filter(pk=user.pk).exists():
            return 1
         else:
@@ -57,6 +56,13 @@ class GenreSerializer(serializers.ModelSerializer):
 
 class GameSerializer(serializers.ModelSerializer):
     username = serializers.ReadOnlyField(source='user.email')
+    is_me = serializers.SerializerMethodField('check',read_only=True)
+    def check(self,game):
+        user = self.context.get('user')
+        if game.user == user:
+            return 1
+        else:
+            return 0
     class Meta:
         model = Game
         fields = '__all__'

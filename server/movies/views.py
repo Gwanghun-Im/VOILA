@@ -176,5 +176,5 @@ def game(request):
         if game.is_valid(raise_exception=True):
             game.save(user=user)
     games = Game.objects.order_by('-score')
-    gamelist = GameSerializer(games, many=True)
+    gamelist = GameSerializer(games, many=True,context={'user':user})
     return Response(gamelist.data[:10])

@@ -1,9 +1,9 @@
 <template>
   <div id="app">
     <div id="nav">
-      <nav class="navbar navbar-expand-lg navbar-light">
+      <nav class="navbar navbar-expand-lg navbar-light py-0">
         <div class="container-fluid">
-          <router-link :to="{name: 'Home'}"> <img src="@/assets/VOILA.png" alt="" height="50px"> </router-link>
+          <router-link :to="{name: 'Home'}"> <img src="@/assets/VOILA.png" alt="" height="65px"> </router-link>
           <div class="">
             <div class="row d-flex">
               <div class="col-4"></div>
