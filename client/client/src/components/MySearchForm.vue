@@ -18,7 +18,7 @@ export default {
   data: function () {
     return {
       input_data: '',
-      msg : ''
+      msg : '"초성게임"을 입력해 보세요.'
     }
   },
   methods: {

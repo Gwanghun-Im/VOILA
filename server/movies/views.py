@@ -1,5 +1,3 @@
-
-from django.db.models.deletion import PROTECT
 from django.http import response
 from django.http.response import HttpResponse, JsonResponse
 from django.shortcuts import render, get_list_or_404, get_object_or_404
@@ -42,7 +40,7 @@ def getMovie(request):
             serializer = MovieListSerializer(data=movie)
             if serializer.is_valid(raise_exception=True):
                 serializer.save(genre=movie.get('genre_ids'))
-    return Response(req.json().get('results'))
+    return Response(req.json().get('results')[:6])
 
 @api_view(['GET','POST'])
 def movie(request, pk):
@@ -178,5 +176,5 @@ def game(request):
         if game.is_valid(raise_exception=True):
             game.save(user=user)
     games = Game.objects.order_by('-score')
-    gamelist = serializers.serialize('json',games)
-    return HttpResponse(gamelist)
+    gamelist = GameSerializer(games, many=True)
+    return Response(gamelist.data[:10])

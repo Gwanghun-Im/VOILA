@@ -30,10 +30,13 @@
     </div>
     <br>
     <div class="table" @click="postgame">
-      순위
-      <div class="rank">
+      top 10
+      <div class="ranks">
         <div v-for="(ranking,idx) in rankings" :key="idx">
-          {{ranking}}
+          <div class="rank">
+            <div>{{ranking.username}}</div>
+            <div>{{ranking.score}}</div>
+          </div>
         </div>
       </div>
     </div>
@@ -167,9 +170,20 @@ export default {
   display: flex;
   justify-content: space-around;
 }
-.rank{
+.ranks{
+  width: 100%;
   display: flex;
   flex-direction: column;
+}
+.rank{
+  width: 100%;
+  padding: 0 1rem;
+  display: flex;
+  justify-content: space-around;
+  /* flex-direction: row; */
+}
+.rank div{
+  font-size: 1.5rem;
 }
 .hide {
   color: #191919;
