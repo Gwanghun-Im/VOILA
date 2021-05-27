@@ -25,7 +25,7 @@
         남은 패스 기회 : <button class="btn btn-danger" @click="passQuiz">{{pass}}</button> 
       </div>
       <div v-else-if="pass<=0">
-        스코어가 감점됩니다 ㅠㅠ <button class="btn btn-danger" @click="passQuiz">{{pass}}</button>
+        스코어가 감점됩니다 ㅠㅠ <button class="btn btn-danger" @click="passQuiz">pass</button>
       </div>
     </div>
     <br>
