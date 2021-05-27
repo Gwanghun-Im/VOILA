@@ -126,7 +126,8 @@ export default {
       return config
     },
     get_review: function (){
-      axios.get(`${SERVER_URL}/movies/${this.movie_id}/`)
+      const config = this.setToken()
+      axios.get(`${SERVER_URL}/movies/${this.movie_id}/`,config)
       .then(res => {
         this.movie_info = res.data
       })

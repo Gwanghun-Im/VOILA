@@ -32,3 +32,8 @@ class Comment(models.Model):
     Review = models.ForeignKey(Review, on_delete=models.CASCADE)
     content = models.CharField(max_length=200)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,blank=True)
+
+class Game(models.Model):
+    score = models.IntegerField(blank=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,blank=True)
+    

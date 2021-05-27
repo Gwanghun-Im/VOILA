@@ -7,7 +7,7 @@
         <div class="top">
           <div class="profile">
             <div class="like">
-              <div v-if="mode">
+              <div v-if="mode" style="color:red">
                 <i class="fas fa-3x fa-heart" @click="likeReview"></i>
               </div>
               <div v-else>
@@ -97,6 +97,15 @@ export default {
     }
   },
   methods:{
+    setToken: function () {
+      const token = localStorage.getItem('jwt')
+      const config = {
+        headers: {
+          Authorization: `JWT ${token}`,
+        }
+      }
+      return config
+    },
     postComment: function () {
       const token = localStorage.getItem('jwt')
       const params={
@@ -116,8 +125,11 @@ export default {
       .then( this.getReview() )
     },
     getReview: function () {
-      axios.get(`${SERVER_URL}/movies/${this.movie_id}/${this.review_id}/`)
+      const config = this.setToken()
+      axios.get(`${SERVER_URL}/movies/${this.movie_id}/${this.review_id}/`, config)
       .then(res => {
+        console.log(res.data)
+        this.mode = res.data.like_user
         this.review = res.data
         this.username = res.data.username.split('@')[0]
         this.date = res.data.created_at.split('.')[0].split('T')[0]
@@ -178,12 +190,6 @@ export default {
   margin: 15px;
   cursor: pointer;
   transition: 0.3s;
-  background-color: #ffffff;
-  border-radius: 24px;
-  padding: 20px;
-  margin: 15px;
-  cursor: pointer;
-  transition: 0.3s;
 }
 .box-container:hover {
   box-shadow: 2px 2px 30px rgba(196, 8, 221, 0.46);
@@ -211,7 +217,7 @@ export default {
 .name-user p{
   font-family: 'Nanum Gothic Coding',monospace;
   color: #3d3d3d;
-  font-size: 4rem;
+  font-size: 2rem;
   font-weight: 300;
   margin: 0%;
 }
@@ -240,7 +246,7 @@ export default {
 .context p{
   font-family: 'Nanum Gothic Coding',monospace;
   display: flex;
-  font-size: 3rem;
+  font-size: 1rem;
   color: #4b4b4b;
   align-items: flex-start;
 }
@@ -273,6 +279,9 @@ export default {
 .postcomment input{
   border: none;
   width: 100%;
+  margin-left: 15px;
   border-radius: 24px;
+  outline: none;
+  border:none;
 }
 </style>

@@ -1,0 +1,181 @@
+<template>
+  <div class="box">
+    <h1>초성 맞추기 with 줄거리</h1>
+    <br>
+    <div class="quiz" v-if="state">
+      <div class="top">
+        <span class="hide">무야호</span>
+        <span>score: {{score}}</span>
+        <span>시계</span>
+      </div>
+      <h3><strong>{{init}}</strong></h3>
+      <h5>{{overview}}</h5>
+    </div>
+    <div class="start" v-else>
+      <button class="btn btn-danger" @click="getRandomMovie">START</button>
+    </div>
+    <div class="answer">
+      <div class="input-group my-3" v-if="state">
+        <input type="text" class="form-control" v-model="myanswer" @keyup.enter="checkAnswer" :placeholder="msg" aria-label="Recipient's username" aria-describedby="basic-addon2">
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary" type="button" @click="checkAnswer">Button</button>
+        </div>
+      </div>
+      <div v-if="pass>0 && state">
+        남은 패스 기회 : <button class="btn btn-danger" @click="passQuiz">{{pass}}</button> 
+      </div>
+      <div v-else-if="pass<=0">
+        스코어가 감점됩니다 ㅠㅠ <button class="btn btn-danger" @click="passQuiz">{{pass}}</button>
+      </div>
+    </div>
+    <br>
+    <div class="table" @click="postgame">
+      순위
+      <div class="rank">
+        <div v-for="(ranking,idx) in rankings" :key="idx">
+          {{ranking}}
+        </div>
+      </div>
+    </div>
+    <br>
+  </div>
+</template>
+
+<script>
+import axios from 'axios'
+import _ from 'loadsh'
+const SERVER_URL = process.env.VUE_APP_SERVER_URL
+
+export default {
+  name:'Game',
+  data: function () {
+    return {
+      state:false,
+      score:0,
+      pass:5,
+      init:'',
+      answer:'',
+      overview:'',
+      myanswer:'',
+      msg:'',
+      rankings:[]
+    }
+  },
+  methods:{
+    getRandomMovie: function () {
+      axios.get(`https://api.themoviedb.org/3/movie/popular?api_key=3a5a5d5bd9ebc60efe15703f924c7578&language=ko-kr&page=${_.random(1,40)}&region=KR`)
+      .then(res => {
+        const movie = res.data.results[_.random(1,19)]
+        this.answer = movie.title
+        this.init = this.getInitSound(movie.title)
+        this.overview = movie.overview
+        console.log(movie.title)
+        this.state = true
+      })
+    },
+    getKorean: function(word){
+      return word.replace(/[^\uAC00-\uD7AF\u1100-\u11FF\u3130-\u318F]/gi,"")
+    },
+    getInitSound:function (src) {
+      var init = [ 'ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
+      var iSound = '';
+      for(var i=0; i<src.length; i++) {
+        var index = Math.floor(((src.charCodeAt(i) - 44032) /28) / 21);
+        if(index >= 0) {
+          iSound += init[index];
+        } 
+      }
+      return iSound;
+    },
+    checkAnswer: function (){
+      console.log(this.answer)
+      console.log(this.myanswer)
+      if (this.getKorean(this.answer) === this.getKorean(this.myanswer)){
+        this.score += 1
+        this.myanswer = ''
+        this.msg = ''
+        this.getRandomMovie()
+      } else {
+        this.myanswer = ''
+        this.msg = '땡입니다. 다시 입력하세요'
+      }
+    },
+    passQuiz: function () {
+      if (this.pass>0){
+        this.pass -= 1
+        alert(this.answer)
+      } else {
+        this.score -= 1
+        alert(this.answer)
+      }
+      this.myanswer = ''
+      this.msg = ''
+      this.getRandomMovie()
+    },
+    postgame: function (){
+      const token = localStorage.getItem('jwt')
+      axios({
+        url:`${SERVER_URL}/movies/game/`,
+        method:'post',
+        headers: {Authorization: `JWT ${token}`},
+        data:{
+          score:this.score
+        }
+      })
+      .then(res => {
+        this.rankings = res.data
+      })
+    }
+  }
+}
+</script>
+
+<style scoped>
+*{
+  font-family: 'Do Hyeon', sans-serif;
+  letter-spacing: 1.5px;
+}
+.box {
+  margin-top: 1%;
+  padding: 1% 0 0 0 ;
+  width: 100%;
+  background: #191919;
+  border-radius: 24px;
+  color: rgba(255, 255, 255, 0.686);
+  flex-wrap: wrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.quiz{
+  width: 90%;
+}
+.table{
+  width: 80%;
+  padding: 10px;
+  margin: 5px;
+  background: white;
+  color: #191919;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-radius: 24px;
+  align-items: center;
+}
+.top{
+  display: flex;
+  justify-content: space-around;
+}
+.rank{
+  display: flex;
+  flex-direction: column;
+}
+.hide {
+  color: #191919;
+}
+.hide:hover{
+  color: white;
+}
+
+</style>

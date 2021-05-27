@@ -4,6 +4,7 @@ import Signup from '@/views/accounts/Signup'
 import Login from '@/views/accounts/Login'
 import Profile from '@/views/accounts/Profile'
 import Home from '@/views/Movies/Home'
+import Game from '@/views/Movies/Game'
 import Reviews from '@/views/Reviews/Reviews'
 import Comments from '@/views/Reviews/Comments'
 
@@ -29,6 +30,11 @@ const routes = [
     path:'/movies/home',
     name:'Home',
     component:Home,
+  },
+  {
+    path:'/movies/game',
+    name:'Game',
+    component:Game,
   },
   {
     path: '/reviews/:id',

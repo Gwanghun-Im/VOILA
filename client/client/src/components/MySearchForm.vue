@@ -23,6 +23,11 @@ export default {
   },
   methods: {
     onInput: function () {
+      if (this.input_data === '초성게임'){
+        this.$router.push({name:"Game"})
+      } else if (this.input_data === '프로필'){
+        this.$router.push({name:"Profile"})
+      }
       axios.get(`${SERVER_URL}/movies/search/${this.input_data}`)
       .then((res) => {
         console.log(res.data)
@@ -82,7 +87,7 @@ export default {
   font-size: 16px;
   transition: 0.4s;
   line-height: 20px;
-  width:400px;
+  width:300px;
 }
 
 </style>

@@ -3,7 +3,7 @@
     <div id="nav">
       <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container-fluid">
-          <router-link :to="{name: 'Home'}"><img src="@/assets/gugu.jpg" alt="?" height='50'></router-link>
+          <router-link :to="{name: 'Home'}">VOILA</router-link>
           <div class="">
             <div class="row d-flex">
               <div class="col-4"></div>
@@ -63,7 +63,6 @@ export default {
     Login: function (Username) {
       this.login = true
       this.user = Username.split("@")[0]
-      console.log(Username)
     },
   },
   created: function () {

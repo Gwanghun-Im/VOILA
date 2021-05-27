@@ -51,12 +51,14 @@ export default {
       })
     },
     searchMovie: function (res) {
-      console.log(res)
       this.movies = res
     },
     setMovieDetail: function (movie) {
       this.movie_detail = movie
     }
+  },
+  created:function(){
+    this.getMovies()
   }
 }
 </script>

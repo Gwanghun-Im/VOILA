@@ -1,6 +1,7 @@
 
 from django.db.models.deletion import PROTECT
-from django.http.response import JsonResponse
+from django.http import response
+from django.http.response import HttpResponse, JsonResponse
 from django.shortcuts import render, get_list_or_404, get_object_or_404
 from django.core import serializers
 from rest_framework import status
@@ -11,8 +12,8 @@ from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 
-from .models import Genre, Movie, Review, Comment
-from .serializers import MovieListSerializer, ReviewSerializer, CommentSerializer,MovieSerializer,GenreSerializer
+from .models import Genre, Movie, Review, Comment,Game
+from .serializers import MovieListSerializer, ReviewSerializer, CommentSerializer,MovieSerializer,GenreSerializer,GameSerializer
 
 import requests
 api_key = '3a5a5d5bd9ebc60efe15703f924c7578'
@@ -28,10 +29,11 @@ def findUser(request):
     user = get_object_or_404(get_user_model(), email=payload["email"])
     return user
 
+import random
 @api_view(['GET'])
 def getMovie(request):
-    movies = Movie.objects.all()
-    url = f'https://api.themoviedb.org/3/movie/top_rated?api_key={api_key}&language=ko-kr'
+    num =random.randrange(1,50)
+    url = f'https://api.themoviedb.org/3/movie/popular?api_key={api_key}&language=ko-kr&page={num}'
     req = requests.get(url)
     for movie in req.json().get('results'):
         try:
@@ -39,28 +41,29 @@ def getMovie(request):
         except:
             serializer = MovieListSerializer(data=movie)
             if serializer.is_valid(raise_exception=True):
-                serializer.save(genre=[movie.get('genre_ids')])
-    serializer = MovieListSerializer(movies, many=True)
-    return Response(serializer.data)
+                serializer.save(genre=movie.get('genre_ids'))
+    return Response(req.json().get('results'))
 
 @api_view(['GET','POST'])
 def movie(request, pk):
     movie = get_object_or_404(Movie, pk=pk)
+    user = findUser(request)
     if request.method == 'POST':
-        serializer = ReviewSerializer(data=request.data)
+        serializer = ReviewSerializer(data=request.data,context={'user':user})
         movie = get_object_or_404(Movie, pk=pk)
         if serializer.is_valid(raise_exception=True):
             serializer.save(movie = movie, user=findUser(request))
             return Response(serializer.data, status=status.HTTP_201_CREATED)
     if request.method == 'GET':
-        serializer = MovieSerializer(movie)
+        serializer = MovieSerializer(movie,context={'user':user})
         return Response(serializer.data)
 
 @api_view(['POST','GET', 'DELETE', 'PUT'])
 def review(request, pk, review_pk):
     review = get_object_or_404(Review, pk=review_pk)
+    user = findUser(request)
     if request.method == 'GET':
-        serializer = ReviewSerializer(review)
+        serializer = ReviewSerializer(review,context={'user':user})
         return Response(serializer.data)
     elif request.method == 'DELETE':
         review.delete()
@@ -89,7 +92,6 @@ def like_movie(request,pk):
     else:
         state = 1
         movie.like_users.add(user)
-    print(state)
     return Response(state)
 
 @api_view(['POST'])
@@ -120,7 +122,6 @@ def comment(request, pk, review_pk, comment_pk):
 
 @api_view(['GET'])
 def search(request,title):
-    movies = Movie.objects.all()
     url = f'https://api.themoviedb.org/3/search/movie/?api_key={api_key}&language=ko-kr&query={title}'
     req = requests.get(url)
     for movie in req.json().get('results'):
@@ -145,7 +146,7 @@ def detail(request, movie_id):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
     title = movie.get('title')
-    youtube_url = f'https://www.googleapis.com/youtube/v3/search?key=AIzaSyBh8RRzXwFyUKx5KXL4X8bXf_JH16T5eVA&part=snippet&type=video&q={title}+officail+trailer'
+    youtube_url = f'https://www.googleapis.com/youtube/v3/search?key=AIzaSyCVAHKACg6w0spaU0pdPQTajuRQaVgheZM&part=snippet&type=video&q={title}+officail+trailer'
     youtube = requests.get(youtube_url).json()
     data={
         'movie':movie,
@@ -168,3 +169,14 @@ def word(request, user_pk):
     wC = Counter(words.split())
     data = [{'text':k, 'value':v} for k,v in wC.items()]
     return Response(data)
+
+@api_view(['POST','GET'])
+def game(request):
+    user = findUser(request)
+    if request.method == 'POST':
+        game = GameSerializer(data=request.data)
+        if game.is_valid(raise_exception=True):
+            game.save(user=user)
+    games = Game.objects.order_by('-score')
+    gamelist = serializers.serialize('json',games)
+    return HttpResponse(gamelist)

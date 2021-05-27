@@ -3,14 +3,11 @@
     v-if="movie.overview && movie.poster_path" data-bs-toggle="modal" data-bs-target="#selected_movie">
     <div class="card my-3">
       <img :src="'https://image.tmdb.org/t/p/w500'+movie.poster_path" alt="movie_img" class="card-image" >
-      
       <div class="card-text mt-0 ">
-        <div class="col pt-2 mb-0">{{movie.release_date.split('-')[0]}}</div>
+        <div class="col pt-2 mb-0">{{this.movie.release_date.split('-')[0]}}</div>
         <p class="card-title fs-5 fw-bolder mb-0 pt-2" >{{movie.title}}</p>
       </div>
-
     </div>
-
   </div>
 </template>
 

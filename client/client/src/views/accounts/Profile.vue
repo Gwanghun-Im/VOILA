@@ -14,9 +14,9 @@
         <h3>{{user.email}}</h3>
         <input type="text" :placeholder="user.username">
         <input type="date" :placeholder="user.date_of_birth">
-        <input type="text" :placeholder="user.address">
-        <input type="text" :placeholder="user.phone">
-        end
+        <input type="text" placeholder="주소">
+        <input type="text" placeholder="휴대폰번호">
+        <input type="submit">
       </div>
     </div>
 
@@ -33,11 +33,36 @@
                   </div>
                 </div>
                 <div class="reviews">
-                  <i class="fas fa-star"></i>
-                  <i class="fas fa-star"></i>
-                  <i class="fas fa-star"></i>
-                  <i class="fas fa-star"></i>
-                  <i class="far fa-star"></i>
+                  <div v-if="review.fields.rank>=1">
+                    <i class="fas fa-star"></i>
+                  </div>
+                  <div v-else-if="review.fields.rank<1">
+                    <i class="far fa-star"></i>
+                  </div>
+                  <div  v-if="review.fields.rank>=3">
+                    <i class="fas fa-star"></i>
+                  </div>
+                  <div  v-else-if="review.fields.rank<3">
+                    <i class="far fa-star"></i>
+                  </div>
+                  <div  v-if="review.fields.rank>=5">
+                    <i class="fas fa-star"></i>
+                  </div>
+                  <div  v-else>
+                    <i class="far fa-star"></i>
+                  </div>
+                  <div  v-if="review.fields.rank>=7">
+                    <i class="fas fa-star"></i>
+                  </div>
+                  <div  v-else>
+                    <i class="far fa-star"></i>
+                  </div>
+                  <div   v-if="review.fields.rank>=9">
+                    <i class="fas fa-star"></i>
+                  </div>
+                  <div   v-else>
+                    <i class="far fa-star"></i>
+                  </div>
                   {{review.fields.rank}}
                 </div>
               </div>
@@ -83,7 +108,6 @@ export default {
       axios.get(`${SERVER_URL}/accounts/profile/`,config)
       .then((res) => {
         this.user = res.data.user
-        console.log(res.data)
         if (res.data.review) {
           this.reviews = JSON.parse(res.data.review)
         } else {
@@ -180,7 +204,7 @@ h3{
   justify-content: center;
 }
 
-input{
+input[type="text"],input[type="date"]{
   font-family: 'Roboto', sans-serif;
   border: 0;
   background: none;
@@ -196,6 +220,7 @@ input{
   border-radius: 24px;
   transition: 0.25s;
 }
+
 
 input[type="text"]:focus{
   width: 280px;
@@ -268,6 +293,8 @@ a {
 }
 .reviews{
   color: #f9d71c;
+  display: flex;
+  justify-content: center;
 }
 .top{
   display: flex;
