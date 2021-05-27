@@ -14,14 +14,14 @@
     <div class="start" v-else>
       <button class="btn btn-danger" @click="startGame">START</button>
     </div>
-    <div class="answer">
-      <div class="input-group my-3" v-if="state">
+    <div class="answer" v-if="state">
+      <div class="input-group my-3" >
         <input type="text" class="form-control" v-model="myanswer" @keyup.enter="checkAnswer" :placeholder="msg" aria-label="Recipient's username" aria-describedby="basic-addon2">
         <div class="input-group-append">
-          <button class="btn btn-outline-secondary" type="button" @click="checkAnswer">Button</button>
+          <button class="btn btn-outline-secondary" type="button" @click="checkAnswer"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
         </div>
       </div>
-      <div v-if="pass>0 && state">
+      <div v-if="pass>0">
         남은 패스 기회 : <button class="btn btn-danger" @click="passQuiz">{{pass}}</button> 
       </div>
       <div v-else-if="pass<=0">
@@ -86,6 +86,7 @@ export default {
         this.time = 120
         this.postGame()
         this.state = false
+        this.pass = 5
       }
     },
     startGame:function(){

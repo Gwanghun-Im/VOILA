@@ -10,7 +10,7 @@
 
 <script>
 import axios from 'axios'
-
+import _ from 'loadsh'
 const SERVER_URL = process.env.VUE_APP_SERVER_URL
 
 export default {
@@ -18,7 +18,7 @@ export default {
   data: function () {
     return {
       input_data: '',
-      msg : '"초성게임"을 입력해 보세요.'
+      msg: _.sample(['"초성게임"을 입력해보세요.','"추천"을 입력해보세요.','"프로필"을 입력해보세요.'])
     }
   },
   methods: {
@@ -27,22 +27,24 @@ export default {
         this.$router.push({name:"Game"})
       } else if (this.input_data === '프로필'){
         this.$router.push({name:"Profile"})
+      } else if (this.input_data === '추천'){
+        this.$emit('random')
+      } else {
+        axios.get(`${SERVER_URL}/movies/search/${this.input_data}`)
+        .then((res) => {
+          console.log(res.data)
+          if (res.data.length === 0){
+            this.msg = `${this.input_data}에 대한 검색결과가 존재하지 않습니다.`
+            this.$emit('on-input',res.data)
+            } else {
+            this.$emit('on-input',res.data)
+            this.msg = ''
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
       }
-      axios.get(`${SERVER_URL}/movies/search/${this.input_data}`)
-      .then((res) => {
-        console.log(res.data)
-        if (res.data.length === 0){
-          console.log(`error`)
-          this.msg = `${this.input_data}에 대한 검색결과가 존재하지 않습니다.`
-          this.$emit('on-input',res.data)
-          } else {
-          this.$emit('on-input',res.data)
-          this.msg = ''
-        }
-      })
-      .catch((err) => {
-        console.log(err)
-      })
     }
   }
 

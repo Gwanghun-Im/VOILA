@@ -2,7 +2,7 @@
   <div class= "container bg-dark text-white">
     <hr>
     <div class="row">
-      <h2 v-if="movie_detail.movie.title">{{movie_detail.movie.title}}</h2>
+      <h2 class="fs-3 fw-bolder mb-3" v-if="movie_detail.movie.title">{{movie_detail.movie.title}} <span class="fs-5 fw-light mb-3" v-if="movie_detail.movie.release_date">({{movie_detail.movie.release_date.split('-')[0]}})</span></h2>
       <hr>
       <iframe class="d-flex justify-content-center" :src="`https://www.youtube.com/embed/${movie_detail.youtube.items[0].id.videoId}`"
       style="display:block; width:100vw; height: 40vh" frameborder="0" allow="autoplay"></iframe>
